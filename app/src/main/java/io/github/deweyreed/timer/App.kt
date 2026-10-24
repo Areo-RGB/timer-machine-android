@@ -12,10 +12,12 @@ import androidx.core.content.edit
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.preference.PreferenceManager
 import coil3.ImageLoader
+import coil3.video.VideoFrameDecoder
 import coil3.SingletonImageLoader
 import com.github.deweyreed.tools.helper.hasPermissions
 import dagger.hilt.android.HiltAndroidApp
 import io.github.deweyreed.timer.utils.DynamicThemeDelegate
+import io.github.deweyreed.timer.utils.ImmersiveFullscreen
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import xyz.aprildown.theme.Theme
@@ -57,6 +59,8 @@ class App : Application(), WorkManagerConfiguration.Provider, SingletonImageLoad
 
     override fun onCreate() {
         super.onCreate()
+
+        registerActivityLifecycleCallbacks(ImmersiveFullscreen())
 
         migrateSharedPreferences()
 
@@ -199,6 +203,7 @@ class App : Application(), WorkManagerConfiguration.Provider, SingletonImageLoad
         return ImageLoader.Builder(this)
             .components {
                 add(ImageActionMapper())
+                add(VideoFrameDecoder.Factory())
             }
             .build()
     }

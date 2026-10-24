@@ -63,6 +63,7 @@ class EditableStep(
         fun onBehaviourAdded(type: BehaviourType)
 
         fun onImageAdd(position: Int)
+        fun onVideoAdd(position: Int)
         fun onImageCheck(position: Int, action: ImageAction)
 
         fun onBehaviourAddedOrRemoved(position: Int, newBehaviours: List<BehaviourEntity>)
@@ -128,6 +129,10 @@ class EditableStep(
 
                     override fun onImageAdding() {
                         handler.onImageAdd(bindingAdapterPosition)
+                    }
+
+                    override fun onVideoAdding() {
+                        handler.onVideoAdd(bindingAdapterPosition)
                     }
 
                     override fun onBehaviourAdded(type: BehaviourType) {

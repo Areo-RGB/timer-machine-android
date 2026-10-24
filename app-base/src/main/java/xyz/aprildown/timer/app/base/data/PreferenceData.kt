@@ -192,7 +192,7 @@ object PreferenceData {
 
     const val PREF_ONE_LAYOUT_ONE_TIME_SIZE = "pref_one_one_time_text_size"
     var Context.oneOneTimeSize: Int
-        get() = safeSharedPreference.getInt(PREF_ONE_LAYOUT_ONE_TIME_SIZE, 36)
+        get() = safeSharedPreference.getInt(PREF_ONE_LAYOUT_ONE_TIME_SIZE, 72)
         set(value) = safeSharedPreference.edit { putInt(PREF_ONE_LAYOUT_ONE_TIME_SIZE, value) }
 
     const val PREF_ONE_LAYOUT_ONE_ACTIONS = "pref_one_one_four_actions"

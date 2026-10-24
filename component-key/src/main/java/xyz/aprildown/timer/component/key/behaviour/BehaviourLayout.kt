@@ -8,19 +8,12 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.TooltipCompat
-import androidx.core.view.isEmpty
-import androidx.core.view.isVisible
-import coil3.load
-import coil3.request.crossfade
 import com.github.deweyreed.tools.helper.setTextIfChanged
 import com.google.android.material.chip.Chip
 import xyz.aprildown.timer.component.key.R
 import xyz.aprildown.timer.component.key.databinding.LayoutBehaviourBinding
-import xyz.aprildown.timer.component.key.databinding.LayoutEditableBehaviourImageBinding
 import xyz.aprildown.timer.domain.entities.BehaviourEntity
-import xyz.aprildown.timer.domain.entities.BehaviourType
 import xyz.aprildown.timer.domain.entities.ImageAction
-import xyz.aprildown.timer.domain.entities.toImageAction
 
 class BehaviourLayout @JvmOverloads constructor(
     context: Context,
@@ -37,7 +30,10 @@ class BehaviourLayout @JvmOverloads constructor(
         orientation = VERTICAL
     }
 
-    fun setBehaviours(list: List<BehaviourEntity>) {
+    /**
+     * @param autoPlayVideo Play the step's video inline, e.g. when the step is active.
+     */
+    fun setBehaviours(list: List<BehaviourEntity>, autoPlayVideo: Boolean = false) {
         val currentSize = currentBehaviours.size
 
         val removeCount = currentBehaviours.size - list.size
@@ -62,27 +58,11 @@ class BehaviourLayout @JvmOverloads constructor(
 
         require(currentBehaviours.size == list.size)
 
-        val imageBehaviour = list.find { it.type == BehaviourType.IMAGE }
-        if (imageBehaviour != null) {
-            binding.layoutImage.isVisible = true
-            val imageView = if (binding.layoutImage.isEmpty()) {
-                LayoutEditableBehaviourImageBinding.inflate(
-                    LayoutInflater.from(context),
-                    binding.layoutImage,
-                    true
-                ).root
-            } else {
-                LayoutEditableBehaviourImageBinding.bind(binding.layoutImage.getChildAt(0)).root
-            }
-            val action = imageBehaviour.toImageAction()
-            imageView.setOnClickListener { onImageCheck?.invoke(action) }
-            imageView.load(action) {
-                crossfade(true)
-            }
-        } else {
-            binding.layoutImage.isVisible = false
-            binding.layoutImage.removeAllViews()
-        }
+        binding.layoutImage.bindBehaviourMedia(
+            behaviours = list,
+            onImageClick = { onImageCheck?.invoke(it) },
+            autoPlayVideo = autoPlayVideo,
+        )
     }
 
     fun setEnabledColor(@ColorInt color: Int) {

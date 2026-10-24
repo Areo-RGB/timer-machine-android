@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
  * https://github.com/dadouf/PagingImageGallery/blob/master/app/src/main/java/com/davidferrand/pagingimagegallery/recyclerview/vfinal/CarouselActivity.kt#L104
  */
 internal class OffsetEndsItemDecoration(
-    @FloatRange(from = 0.0, to = 1.0) private val percent: Float = 0.33f
+    @FloatRange(from = 0.0, to = 1.0) private val percent: Float = 0.33f,
+    private val skipTopOffset: (position: Int) -> Boolean = { false },
 ) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
@@ -22,7 +23,7 @@ internal class OffsetEndsItemDecoration(
 
         when (parent.getChildAdapterPosition(view)) {
             0 -> {
-                outRect.top = getOffset(parent, view)
+                if (!skipTopOffset(0)) outRect.top = getOffset(parent, view)
             }
             state.itemCount - 1 -> {
                 outRect.bottom = getOffset(parent, view)

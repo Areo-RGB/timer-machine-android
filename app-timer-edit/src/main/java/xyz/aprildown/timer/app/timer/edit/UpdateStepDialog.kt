@@ -32,6 +32,7 @@ import xyz.aprildown.timer.domain.entities.toBeepAction
 import xyz.aprildown.timer.domain.entities.toCountAction
 import xyz.aprildown.timer.domain.entities.toHalfAction
 import xyz.aprildown.timer.domain.entities.toImageAction
+import xyz.aprildown.timer.domain.entities.toVideoAction
 import xyz.aprildown.timer.domain.entities.toMusicAction
 import xyz.aprildown.timer.domain.entities.toNotificationAction
 import xyz.aprildown.timer.domain.entities.toScreenAction
@@ -77,6 +78,24 @@ class UpdateStepDialog :
         }
         changeBehaviour(type = BehaviourType.IMAGE) {
             it.toImageAction().copy(data = uri.toString()).toBehaviourEntity()
+        }
+    }
+
+    private val pickVideoLauncher = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri == null || uri == Uri.EMPTY) return@registerForActivityResult
+        val context = requireContext()
+        try {
+            context.contentResolver
+                .takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } catch (e: Exception) {
+            appTracker.trackError(e)
+            context.toast(e.message.toString())
+            return@registerForActivityResult
+        }
+        changeBehaviour(type = BehaviourType.VIDEO) {
+            it.toVideoAction().copy(data = uri.toString()).toBehaviourEntity()
         }
     }
 
@@ -302,6 +321,9 @@ class UpdateStepDialog :
                 BehaviourType.IMAGE -> {
                     addImageItems(context = context, onPick = ::onImageAdding)
                 }
+                BehaviourType.VIDEO -> {
+                    addVideoItems(context = context, onPick = ::onVideoAdding)
+                }
                 BehaviourType.SKIP -> {
                     addSkipItems(
                         context = context,
@@ -328,6 +350,12 @@ class UpdateStepDialog :
     override fun onImageAdding() {
         pickImageLauncher.launch(
             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+    override fun onVideoAdding() {
+        pickVideoLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
         )
     }
 

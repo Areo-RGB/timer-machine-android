@@ -170,6 +170,7 @@ dependencies {
     implementation(libs.ultimateRingtonePicker)
     implementation(libs.coil)
     implementation(libs.coil.gif)
+    implementation(libs.coil.video)
     implementation(libs.aboutLibraries)
 
     androidTestCompileOnly(libs.taskerPlugin)

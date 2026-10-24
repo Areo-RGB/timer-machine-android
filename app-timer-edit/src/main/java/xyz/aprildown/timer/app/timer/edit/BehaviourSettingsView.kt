@@ -336,6 +336,18 @@ internal fun MaterialPopupMenuBuilder.addImageItems(
     }
 }
 
+internal fun MaterialPopupMenuBuilder.addVideoItems(
+    context: Context,
+    onPick: () -> Unit,
+) {
+    section {
+        item {
+            label = context.getString(RBase.string.video_pick)
+            callback = onPick
+        }
+    }
+}
+
 internal fun MaterialPopupMenuBuilder.addSkipItems(
     context: Context,
     action: SkipAction,

@@ -30,7 +30,7 @@ package xyz.aprildown.timer.domain.entities
  *     str1: The loops
  */
 enum class BehaviourType {
-    MUSIC, VIBRATION, SCREEN, VOICE, HALT, SKIP, BEEP, HALF, COUNT, NOTIFICATION, FLASHLIGHT, IMAGE;
+    MUSIC, VIBRATION, SCREEN, VOICE, HALT, SKIP, BEEP, HALF, COUNT, NOTIFICATION, FLASHLIGHT, IMAGE, VIDEO;
 
     val hasBoolValue: Boolean
         get() = this == MUSIC || this == BEEP
@@ -393,6 +393,21 @@ fun BehaviourEntity.toImageAction(): ImageAction {
 }
 
 // endregion Image
+
+// region Video
+
+data class VideoAction(val data: String) : Action {
+    override fun toBehaviourEntity(): BehaviourEntity {
+        return BehaviourEntity(type = BehaviourType.VIDEO, str1 = data)
+    }
+}
+
+fun BehaviourEntity.toVideoAction(): VideoAction {
+    require(type == BehaviourType.VIDEO)
+    return VideoAction(data = str1)
+}
+
+// endregion Video
 
 // region Skip
 

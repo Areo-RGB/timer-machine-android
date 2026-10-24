@@ -98,7 +98,7 @@ internal class VisibleStep(
             binding.textTitle.text = step.label
             binding.textTime.text = step.length.produceTime()
             binding.layoutBehaviour.run {
-                setBehaviours(step.behaviour)
+                setBehaviours(step.behaviour, autoPlayVideo = isSelected)
                 setEnabledColor(typeColor)
                 onImageCheck = this@VisibleStep.imageCheckListener
             }

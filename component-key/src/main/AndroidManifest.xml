@@ -5,5 +5,10 @@
             android:name=".ImagePreviewActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.ImagePreview" />
+        <activity
+            android:name=".VideoPlayerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.ImagePreview" />
     </application>
 </manifest>

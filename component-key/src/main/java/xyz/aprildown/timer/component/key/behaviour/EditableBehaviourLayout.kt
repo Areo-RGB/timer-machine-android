@@ -11,10 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.EmptySuper
 import androidx.appcompat.widget.TooltipCompat
 import androidx.appcompat.widget.TooltipCompatFix
-import androidx.core.view.isEmpty
 import androidx.core.view.isVisible
-import coil3.load
-import coil3.request.crossfade
 import com.github.deweyreed.tools.helper.drawable
 import com.github.deweyreed.tools.helper.setTextIfChanged
 import com.github.deweyreed.tools.helper.toColorStateList
@@ -24,11 +21,9 @@ import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.chip.Chip
 import xyz.aprildown.timer.component.key.R
 import xyz.aprildown.timer.component.key.databinding.LayoutEditableBehaviourBinding
-import xyz.aprildown.timer.component.key.databinding.LayoutEditableBehaviourImageBinding
 import xyz.aprildown.timer.domain.entities.BehaviourEntity
 import xyz.aprildown.timer.domain.entities.BehaviourType
 import xyz.aprildown.timer.domain.entities.ImageAction
-import xyz.aprildown.timer.domain.entities.toImageAction
 
 class EditableBehaviourLayout(
     context: Context,
@@ -51,6 +46,9 @@ class EditableBehaviourLayout(
 
         @EmptySuper
         fun onImageContentClick(action: ImageAction): Unit = Unit
+
+        @EmptySuper
+        fun onVideoAdding(): Unit = Unit
     }
 
     private val binding =
@@ -92,6 +90,8 @@ class EditableBehaviourLayout(
                                 callback = {
                                     if (type == BehaviourType.IMAGE) {
                                         listener?.onImageAdding()
+                                    } else if (type == BehaviourType.VIDEO) {
+                                        listener?.onVideoAdding()
                                     } else {
                                         addStubBehaviour(BehaviourEntity(type), true)
                                     }
@@ -134,24 +134,7 @@ class EditableBehaviourLayout(
             setViewWithEntity(it)
         }
 
-        val imageAction = bs.find { it.type == BehaviourType.IMAGE }?.toImageAction()
-        if (imageAction != null) {
-            val imageView = if (binding.layoutImage.isEmpty()) {
-                LayoutEditableBehaviourImageBinding.inflate(
-                    LayoutInflater.from(context),
-                    binding.layoutImage,
-                    true
-                ).root
-            } else {
-                LayoutEditableBehaviourImageBinding.bind(binding.layoutImage.getChildAt(0)).root
-            }
-            imageView.setOnClickListener { listener?.onImageContentClick(imageAction) }
-            imageView.load(imageAction) {
-                crossfade(true)
-            }
-        } else {
-            binding.layoutImage.removeAllViews()
-        }
+        bindMedia()
 
         updateHelperViews()
     }
@@ -180,11 +163,18 @@ class EditableBehaviourLayout(
         data.remove(behaviourType)
         updateHelperViews()
 
-        if (behaviourType == BehaviourType.IMAGE) {
-            binding.layoutImage.removeAllViews()
+        if (behaviourType == BehaviourType.IMAGE || behaviourType == BehaviourType.VIDEO) {
+            bindMedia()
         }
 
         onBehaviourAddedOrRemovedCallback?.invoke()
+    }
+
+    private fun bindMedia() {
+        binding.layoutImage.bindBehaviourMedia(
+            behaviours = getBehaviours(),
+            onImageClick = { listener?.onImageContentClick(it) },
+        )
     }
 
     private fun setViewWithEntity(entity: BehaviourEntity) {

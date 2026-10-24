@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItem
 import com.mikepenz.fastadapter.adapters.ItemAdapter
+import xyz.aprildown.timer.domain.entities.BehaviourType
 import xyz.aprildown.timer.domain.entities.ImageAction
 import xyz.aprildown.timer.domain.entities.StepEntity
 import xyz.aprildown.timer.domain.entities.TimerEntity
@@ -46,7 +47,7 @@ class StepListView @JvmOverloads constructor(
 
     init {
         layoutManager = stepLayoutManager
-        addItemDecoration(OffsetEndsItemDecoration())
+        addItemDecoration(OffsetEndsItemDecoration(skipTopOffset = ::hasVideo))
         itemAnimator?.run {
             changeDuration = ANIMATION_DURATION
             moveDuration = ANIMATION_DURATION
@@ -95,6 +96,11 @@ class StepListView @JvmOverloads constructor(
         toIndex(currentIndex, forceRefreshing = true)
     }
 
+    private fun hasVideo(position: Int): Boolean {
+        return (fastAdapter.getItem(position) as? VisibleStep)
+            ?.step?.behaviour?.any { it.type == BehaviourType.VIDEO } == true
+    }
+
     fun toIndex(newIndex: TimerIndex, forceRefreshing: Boolean = false) {
         currentIndex = newIndex
         if (!::timerInstance.isInitialized) return
@@ -120,7 +126,11 @@ class StepListView @JvmOverloads constructor(
             currentPosition = newPosition
             fastAdapter.notifyItemChanged(oldPosition)
             fastAdapter.notifyItemChanged(newPosition)
-            stepLayoutManager.scrollToPositionWithOffset(newPosition, height / 3)
+            // Pin steps with a video to the top so the video gets the room.
+            stepLayoutManager.scrollToPositionWithOffset(
+                newPosition,
+                if (hasVideo(newPosition)) 0 else height / 3
+            )
         }
     }
 

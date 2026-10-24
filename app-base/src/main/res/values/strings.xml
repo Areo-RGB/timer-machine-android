@@ -874,4 +874,7 @@
     <string name="billing_help_contact">Contact</string>
     <string name="billing_help_email_title">TimeR Machine Billing Issue</string>
 
+    <string name="behaviour_video">Video</string>
+    <string name="behaviour_video_help">Attach a video for the step</string>
+    <string name="video_pick">Pick a video</string>
 </resources>

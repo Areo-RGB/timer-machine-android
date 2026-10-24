@@ -575,4 +575,7 @@
     <string name="pref_screen_title_default">Systemvoreinstellung</string>
     <string name="pref_screen_timing_title_open">Wenn die App geöffnet ist</string>
     <string name="pref_screen_timing_title_running">Wenn die App geöffnet ist und ein Timer läuft</string>
+    <string name="behaviour_video">Video</string>
+    <string name="behaviour_video_help">Ein Video für den Schritt anhängen</string>
+    <string name="video_pick">Video auswählen</string>
 </resources>

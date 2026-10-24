@@ -65,6 +65,7 @@ import xyz.aprildown.timer.domain.entities.toBeepAction
 import xyz.aprildown.timer.domain.entities.toCountAction
 import xyz.aprildown.timer.domain.entities.toHalfAction
 import xyz.aprildown.timer.domain.entities.toImageAction
+import xyz.aprildown.timer.domain.entities.toVideoAction
 import xyz.aprildown.timer.domain.entities.toMusicAction
 import xyz.aprildown.timer.domain.entities.toNotificationAction
 import xyz.aprildown.timer.domain.entities.toScreenAction
@@ -122,6 +123,25 @@ class EditActivity :
         }
         changeBehaviour(type = BehaviourType.IMAGE, position = position) {
             it.toImageAction().copy(data = uri.toString()).toBehaviourEntity()
+        }
+    }
+
+    private val pickVideoLauncher = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        val position = viewModel.imagePosition
+        viewModel.imagePosition = -1
+        if (uri == null || uri == Uri.EMPTY) return@registerForActivityResult
+        if (position == -1) return@registerForActivityResult
+        try {
+            contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } catch (e: Exception) {
+            appTracker.trackError(e)
+            toast(e.message.toString())
+            return@registerForActivityResult
+        }
+        changeBehaviour(type = BehaviourType.VIDEO, position = position) {
+            it.toVideoAction().copy(data = uri.toString()).toBehaviourEntity()
         }
     }
 
@@ -812,6 +832,12 @@ class EditActivity :
                         onPick = { onImageAdd(position) },
                     )
                 }
+                BehaviourType.VIDEO -> {
+                    addVideoItems(
+                        context = this@EditActivity,
+                        onPick = { onVideoAdd(position) },
+                    )
+                }
                 BehaviourType.SKIP -> {
                     addSkipItems(
                         context = this@EditActivity,
@@ -907,6 +933,13 @@ class EditActivity :
         viewModel.imagePosition = position
         pickImageLauncher.launch(
             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+    override fun onVideoAdd(position: Int) {
+        viewModel.imagePosition = position
+        pickVideoLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
         )
     }
 
